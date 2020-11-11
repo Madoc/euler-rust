@@ -1,6 +1,6 @@
 mod problems;
 
-const PROBLEM_NUMBER: u16 = 14;
+const PROBLEM_NUMBER: u16 = 15;
 
 fn main() {
   print!("\nProblem {}\n\n", PROBLEM_NUMBER);
