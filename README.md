@@ -15,7 +15,7 @@ In order to run the solution to a specific problem:
 1. Open `main.rs`.
    Change the value of `PROBLEM_NUMBER` to the number of the problem to run.
 2. ```bash
-   cargo run
+   cargo run --release
    ```
 
 To locate the solution for a specific problem, look under `src/problems`.
