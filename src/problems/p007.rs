@@ -11,7 +11,6 @@ fn test() {
   assert_eq!(nth_prime(6), 13)
 }
 
-// TODO too slow
 pub fn solve() -> u64 {
   nth_prime(10_001)
 }
@@ -30,7 +29,7 @@ fn nth_prime(n: usize) -> u64 {
     }
     primes.insert(candidate);
     last_prime = candidate;
-    candidate += 1;
+    candidate += 2;
   }
   last_prime
 }
