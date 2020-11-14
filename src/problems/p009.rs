@@ -13,7 +13,6 @@ fn test() {
   assert_eq!(pythagorean_triplet_product(3 + 4 + 5), 3 * 4 * 5)
 }
 
-// TODO too slow
 pub fn solve() -> u64 {
   pythagorean_triplet_product(1000)
 }
