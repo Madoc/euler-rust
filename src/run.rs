@@ -1,4 +1,5 @@
 use std::process::exit;
+use std::time::{Duration, Instant};
 
 use Problems::All;
 use RunMode::Check;
@@ -6,7 +7,6 @@ use RunMode::Solve;
 
 use crate::cli_args::Problems::ProblemNumbers;
 use crate::cli_args::{Problems, RunConfig, RunMode};
-use crate::problems::solve_problem;
 use crate::spoilers::solution;
 use crate::ProblemNumber;
 
@@ -30,10 +30,8 @@ pub fn run(config: RunConfig) {
 
 fn check_problems(problem_numbers: Vec<ProblemNumber>) {
   for problem_number in problem_numbers {
-    let message: String = match solve_problem(problem_number) {
-      Some(calculated_solution) => {
-        fmt_check_result_or_unknown(problem_number, calculated_solution, solution(problem_number))
-      }
+    let message: String = match calculate(problem_number) {
+      Some(calculated) => fmt_check_result_or_unknown(calculated, solution(problem_number)),
       None => fmt_check_not_implemented(problem_number),
     };
     println!("{}", message)
@@ -41,40 +39,55 @@ fn check_problems(problem_numbers: Vec<ProblemNumber>) {
 }
 
 fn check_all_problems() {
-  for problem_number in 1..=PROBLEM_NUMBER_UPPER_BOUND {
-    match solve_problem(problem_number) {
-      Some(calculated_solution) => println!(
-        "{}",
-        fmt_check_result_or_unknown(problem_number, calculated_solution, solution(problem_number))
-      ),
-      None => (),
-    }
-  }
+  (1..=PROBLEM_NUMBER_UPPER_BOUND)
+    .flat_map(calculate)
+    .for_each(|calculated| {
+      let actual_solution_maybe: Option<String> = solution(calculated.problem_number);
+      println!("{}", fmt_check_result_or_unknown(calculated, actual_solution_maybe))
+    });
 }
 
 fn solve_problems(problem_numbers: Vec<ProblemNumber>) {
   for problem_number in problem_numbers {
-    match solve_problem(problem_number) {
-      Some(solution) => println!("{}", fmt_solution(problem_number, solution)),
+    match calculate(problem_number) {
+      Some(calculated) => println!("{}", fmt_solution(problem_number, calculated.solution)),
       None => println!("{}", fmt_solution(problem_number, "[not implemented]".to_string())),
     }
   }
 }
 
 fn solve_all_problems() {
-  for problem_number in 1..=PROBLEM_NUMBER_UPPER_BOUND {
-    match solve_problem(problem_number) {
-      Some(solution) => println!("{}", fmt_solution(problem_number, solution)),
-      None => (),
-    }
-  }
+  (1..=PROBLEM_NUMBER_UPPER_BOUND)
+    .flat_map(calculate)
+    .for_each(|calculated| {
+      println!(
+        "{} ({:?})",
+        fmt_solution(calculated.problem_number, calculated.solution),
+        calculated.duration
+      )
+    });
 }
 
-fn fmt_check_result(problem_number: ProblemNumber, calculated_solution: String, actual_solution: String) -> String {
-  if calculated_solution == actual_solution {
-    fmt_check_success(problem_number)
+struct Calculated {
+  problem_number: ProblemNumber,
+  solution: String,
+  duration: Duration,
+}
+
+fn calculate(problem_number: ProblemNumber) -> Option<Calculated> {
+  let time: Instant = Instant::now();
+  crate::problems::solve_problem(problem_number).map(|solution| Calculated {
+    problem_number,
+    solution,
+    duration: time.elapsed(),
+  })
+}
+
+fn fmt_check_result(calculated: Calculated, actual_solution: String) -> String {
+  if calculated.solution == actual_solution {
+    fmt_check_success(calculated.problem_number, calculated.duration)
   } else {
-    fmt_check_failure(problem_number, calculated_solution)
+    fmt_check_failure(calculated.problem_number, calculated.solution, calculated.duration)
   }
 }
 
@@ -82,32 +95,31 @@ fn fmt_check_not_implemented(problem_number: ProblemNumber) -> String {
   fmt_solution(problem_number, "❓ [not implemented]".to_string())
 }
 
-fn fmt_check_result_or_unknown(
-  problem_number: ProblemNumber,
-  calculated_solution: String,
-  actual_solution_maybe: Option<String>,
-) -> String {
+fn fmt_check_result_or_unknown(calculated: Calculated, actual_solution_maybe: Option<String>) -> String {
   match actual_solution_maybe {
-    Some(actual_solution) => fmt_check_result(problem_number, calculated_solution, actual_solution),
-    None => fmt_check_unknown(problem_number, calculated_solution),
+    Some(actual_solution) => fmt_check_result(calculated, actual_solution),
+    None => fmt_check_unknown(calculated.problem_number, calculated.solution, calculated.duration),
   }
 }
 
-fn fmt_check_unknown(problem_number: ProblemNumber, calculated_solution: String) -> String {
+fn fmt_check_unknown(problem_number: ProblemNumber, calculated_solution: String, duration: Duration) -> String {
   fmt_solution(
     problem_number,
-    format!("❓ [actual solution unknown, calculated: {}]", calculated_solution),
+    format!(
+      "❓ [actual solution unknown, calculated: {}] ({:?})",
+      calculated_solution, duration
+    ),
   )
 }
 
-fn fmt_check_success(problem_number: ProblemNumber) -> String {
-  fmt_solution(problem_number, "✅".to_string())
+fn fmt_check_success(problem_number: ProblemNumber, duration: Duration) -> String {
+  fmt_solution(problem_number, format!("✅ ({:?})", duration))
 }
 
-fn fmt_check_failure(problem_number: ProblemNumber, wrong_solution: String) -> String {
+fn fmt_check_failure(problem_number: ProblemNumber, wrong_solution: String, duration: Duration) -> String {
   fmt_solution(
     problem_number,
-    format!("❌ [calculated wrong solution: {}]", wrong_solution),
+    format!("❌ [calculated wrong solution: {}] ({:?})", wrong_solution, duration),
   )
 }
 
