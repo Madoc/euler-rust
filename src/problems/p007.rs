@@ -4,8 +4,6 @@
 //
 // What is the 10 001st prime number?
 
-use std::collections::HashSet;
-
 #[test]
 fn test() {
   assert_eq!(nth_prime(6), 13)
@@ -16,10 +14,10 @@ pub fn solve() -> u64 {
 }
 
 fn nth_prime(n: usize) -> u64 {
-  let mut primes: HashSet<u64> = HashSet::new();
+  let mut primes: Vec<u64> = Vec::new();
   let mut candidate: u64 = 3;
   let mut last_prime: u64 = 2;
-  primes.insert(2);
+  primes.push(2);
   'next_candidate: while primes.len() < n {
     for prime in &primes {
       if candidate % prime == 0 {
@@ -27,7 +25,7 @@ fn nth_prime(n: usize) -> u64 {
         continue 'next_candidate;
       }
     }
-    primes.insert(candidate);
+    primes.push(candidate);
     last_prime = candidate;
     candidate += 2;
   }
