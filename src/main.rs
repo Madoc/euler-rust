@@ -1,11 +1,13 @@
+mod cli_args;
 mod problems;
+mod run;
+mod spoilers;
 
-const PROBLEM_NUMBER: u16 = 9;
+pub type ProblemNumber = u16;
 
 fn main() {
-  print!("\nProblem {}\n\n", PROBLEM_NUMBER);
-  match problems::solve_problem(PROBLEM_NUMBER) {
-    Some(solution) => print!("Solution: {}\n\n", solution),
-    None => print!("No solution implemented.\n\n"),
+  match cli_args::parse_args() {
+    Err(msg) => run::args_parse_error(msg),
+    Ok(config) => run::run(config),
   }
 }
