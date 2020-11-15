@@ -25,7 +25,7 @@ cargo build --release
 To output a calculated solution:
 
 ```bash
-./target/euler-rust solve 12
+./target/release/euler-rust solve 12
 ```
 
 Or, to build and run at the same time:
@@ -39,7 +39,7 @@ Several problem numbers can be given, or `all` for printing all calculated solut
 For checking if solutions are correct, without printing the solutions:
 
 ```bash
-./target/euler-rust check 12
+./target/release/euler-rust check 12
 ```
 
 Again, several problems can be passed, or `all` for checking all of them.
