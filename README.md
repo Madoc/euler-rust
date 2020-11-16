@@ -69,6 +69,7 @@ Things I learned about Rust from implementing this:
 * Unit testing.
 * Working with command-line arguments.
 * Arrays, vectors, sets and maps.
+* Memory allocation.
 * Functional collection operators.
 * Loop continuation with labels.
 
