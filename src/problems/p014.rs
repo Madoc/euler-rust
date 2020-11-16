@@ -19,8 +19,8 @@ use std::collections::{HashMap, LinkedList};
 
 const FAST_CACHE_SIZE: usize = 4_000_000;
 
-type CollatzNumber = u64;
-type StepCount = usize;
+type CollatzNumber = u32;
+type StepCount = u16;
 
 #[test]
 fn test() {
@@ -46,7 +46,7 @@ fn collatz_chain_length(
   cache: &mut Cache,
 ) -> StepCount {
   if n == 1 || cache.contains_key(n) {
-    let mut steps: StepCount = cache.get(n) + previous_seq.len();
+    let mut steps: StepCount = cache.get(n) + (previous_seq.len() as StepCount);
     let result = steps;
     while !previous_seq.is_empty() {
       steps -= 1;
