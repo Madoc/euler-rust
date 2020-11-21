@@ -50,7 +50,11 @@ fn check_all_problems() {
 fn solve_problems(problem_numbers: Vec<ProblemNumber>) {
   for problem_number in problem_numbers {
     match calculate(problem_number) {
-      Some(calculated) => println!("{}", fmt_solution(problem_number, calculated.solution)),
+      Some(calculated) => println!(
+        "{} {:?}",
+        fmt_solution(problem_number, calculated.solution),
+        calculated.duration
+      ),
       None => println!("{}", fmt_solution(problem_number, "[not implemented]".to_string())),
     }
   }
