@@ -27,6 +27,7 @@ pub fn solution(problem_number: ProblemNumber) -> Option<String> {
     017 => Some("21124"),
     018 => Some("1074"),
     019 => Some("171"),
+    020 => Some("648"),
     _ => None,
   }
   .map(|str| str.to_string())
