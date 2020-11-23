@@ -72,6 +72,7 @@ Things I learned about Rust from implementing this:
 * Memory allocation.
 * Functional collection operators.
 * Loop continuation with labels.
+* Including static resources with the `!include*` macros.
 
 [Project Euler]: https://projecteuler.net/
 [Rust]: https://www.rust-lang.org/

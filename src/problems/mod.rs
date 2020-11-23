@@ -21,6 +21,7 @@ mod p018;
 mod p019;
 mod p020;
 mod p021;
+mod p022;
 
 pub fn solve_problem(number: ProblemNumber) -> Option<String> {
   match number {
@@ -45,6 +46,7 @@ pub fn solve_problem(number: ProblemNumber) -> Option<String> {
     019 => Some(p019::solve().to_string()),
     020 => Some(p020::solve().to_string()),
     021 => Some(p021::solve().to_string()),
+    022 => Some(p022::solve().to_string()),
     _ => None,
   }
 }
